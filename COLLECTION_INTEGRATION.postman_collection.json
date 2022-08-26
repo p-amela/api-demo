@@ -1,0 +1,1102 @@
+{
+	"info": {
+		"_postman_id": "386c162d-7264-41cd-b2e3-61024c69a643",
+		"name": "COLLECTION INTEGRATION",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9800910"
+	},
+	"item": [
+		{
+			"name": "DELETE",
+			"item": [
+				{
+					"name": "Positive test",
+					"item": [
+						{
+							"name": "Add new post",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"idOwner\",\"60d0fe4f5311236168a10a0b\");\r",
+											"pm.collectionVariables.set(\"textPublication\",\"this is a test publication\");\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();\r",
+											"const idPublication = response.id;\r",
+											"pm.collectionVariables.set(\"idPublication\",idPublication)\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"owner\": \"{{idOwner}}\",\r\n    \"text\": \"{{textPublication}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{urlBase}}post/create",
+									"host": [
+										"{{urlBase}}post"
+									],
+									"path": [
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete post with ID valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const requestUrl = pm.request.url;\r",
+											"const response = pm.response.text();\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Verify that the transfer protocol is 'https'\", function (){\r",
+											"    pm.expect(requestUrl).to.have.property(\"protocol\",\"https\");\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Verify that the response is String\", function (){\r",
+											"    pm.expect(response).to.be.a(\"string\");\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Verify that the portoloco of transfer is 'https'\", function (){\r",
+											"    pm.expect(response).to.have.contain(\"id\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Verify that the ID response is equals to ID publication\", function (){\r",
+											"    pm.expect(pm.response.json().id).to.eql(pm.collectionVariables.get(\"idPublication\"));\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{urlBase}}post/:id",
+									"host": [
+										"{{urlBase}}post"
+									],
+									"path": [
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{idPublication}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Negative test",
+					"item": [
+						{
+							"name": "Delete post with nonexistent ID",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"idPublication\",\"60d0fe4d53112d6168a149ca\")"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const requestUrl = pm.request.url;\r",
+											"const response = pm.response.text();\r",
+											"\r",
+											"pm.test(\"Verify that the transfer protocol is 'https'\", function (){\r",
+											"    pm.expect(requestUrl).to.have.property(\"protocol\",\"https\");\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Verify that the response is String\", function (){\r",
+											"    pm.expect(response).to.be.a(\"string\");\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Verify that the responde contain 'error'\", function (){\r",
+											"    pm.expect(response).to.have.contain(\"error\")\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"const message=\"RESOURCE_NOT_FOUND\"\r",
+											"pm.test(`Verify that the error message is: ${message}`, function () {\r",
+											"    pm.expect(pm.response.json().error).to.eql(message);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{urlBase}}post/:id",
+									"host": [
+										"{{urlBase}}post"
+									],
+									"path": [
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{idPublication}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dalete post with ID invalid",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"idPublication\",\"gfsgfdgs@#$@$\");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const requestUrl = pm.request.url;\r",
+											"const response = pm.response.text();\r",
+											"\r",
+											"pm.test(\"Verify that the transfer protocol is 'https'\", function (){\r",
+											"    pm.expect(requestUrl).to.have.property(\"protocol\",\"https\");\r",
+											"})\r",
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Verify that the response is String\", function (){\r",
+											"    pm.expect(response).to.be.a(\"string\");\r",
+											"})\r",
+											"\r",
+											"const message=\"PARAMS_NOT_VALID\"\r",
+											"pm.test(`Verify that the error message is: ${message}`, function () {\r",
+											"    pm.expect(pm.response.json().error).to.eql(message);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{urlBase}}post/:id",
+									"host": [
+										"{{urlBase}}post"
+									],
+									"path": [
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{idPublication}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete post with ID null",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const requestUrl = pm.request.url;\r",
+											"const response = pm.response.text();\r",
+											"\r",
+											"pm.test(\"Verify that the transfer protocol is 'https'\", function (){\r",
+											"    pm.expect(requestUrl).to.have.property(\"protocol\",\"https\");\r",
+											"})\r",
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Verify that the response is String\", function (){\r",
+											"    pm.expect(response).to.be.a(\"string\");\r",
+											"})\r",
+											"\r",
+											"const message=\"PARAMS_NOT_VALID\"\r",
+											"pm.test(`Verify that the error message is: ${message}`, function () {\r",
+											"    pm.expect(pm.response.json().error).to.eql(message);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{urlBase}}post/:id",
+									"host": [
+										"{{urlBase}}post"
+									],
+									"path": [
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{idPublication}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "UPDATE",
+			"item": [
+				{
+					"name": "Positive Cases",
+					"item": [
+						{
+							"name": "Get all posts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{urlBase}}post",
+									"host": [
+										"{{urlBase}}post"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Post",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"pm.test(\"Response time is less than 900ms\", function () {\r",
+											"    pm.expect(pm.response.responseTime).to.be.below(900);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Successful POST request\", function () {\r",
+											"    pm.expect(pm.response.code).to.be.oneOf([200,201]);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Status code name has string\", function () {\r",
+											"    pm.response.to.have.status(\"OK\");\r",
+											"});\r",
+											"\r",
+											"const schema = {\r",
+											"    \"id\": \"string\",\r",
+											"    \"image\": \"string\",\r",
+											"    \"likes\": \"number\",\r",
+											"    \"link\": \"string\",\r",
+											"    \"text\": \"string\",\r",
+											"    \"publishDate\": \"string\"\r",
+											"};\r",
+											"pm.test('Post is valid', function() {\r",
+											"  pm.response.to.have.jsonSchema(schema);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"image\": \"https://img.dummyapi.io/photo-1564694202779-bc908c327862.jpg\",\r\n    \"likes\": 884,\r\n    \"tags\": [\r\n        \"animal\",\r\n        \"tests\",\r\n        \"qa\"\r\n    ],\r\n    \"text\": \"adult Labrador retriever\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{urlBase}}post/:id",
+									"host": [
+										"{{urlBase}}post"
+									],
+									"path": [
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "60d21b7d67d0d8992e610d25"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Negative Cases",
+					"item": [
+						{
+							"name": "Update a post by a non-existent id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"pm.test(\"Error message is shown\", function () {\r",
+											"  pm.response.to.have.body('{\"error\":\"PARAMS_NOT_VALID\"}');\r",
+											"});\r",
+											"pm.test(\"Content-Type header is present\", () => {\r",
+											"  pm.response.to.have.header(\"Content-Type\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"image\": \"https://img.dummyapi.io/photo-1564694202779-bc908c327862.jpg\",\r\n    \"likes\": 99,\r\n    \"tags\": [\r\n        \"animal\",\r\n        \"tests\"\r\n    ],\r\n    \"text\": \"adult Labrador retriever\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{urlBase}}/post/:id",
+									"host": [
+										"{{urlBase}}"
+									],
+									"path": [
+										"post",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1311255252"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update a post sending empty fields",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Unsuccessful POST request\", () => {\r",
+											"  pm.expect(pm.response.code).to.be.oneOf([200,201,202]);\r",
+											"});\r",
+											"const schema = {\r",
+											"    \"id\": \"string\",\r",
+											"    \"image\": \"string\",\r",
+											"    \"likes\": \"number\",\r",
+											"    \"link\": \"string\",\r",
+											"    \"text\": \"string\",\r",
+											"    \"publishDate\": \"string\"\r",
+											"};\r",
+											"pm.test('Schema is valid', function() {\r",
+											"  pm.response.to.have.jsonSchema(schema);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"image\": \" \",\r\n    \"likes\": 0,\r\n    \"link\": \"\",\r\n    \"tags\": [],\r\n    \"text\": \"\",\r\n    \"publishDate\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{urlBase}}/post/:id",
+									"host": [
+										"{{urlBase}}"
+									],
+									"path": [
+										"post",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6308caed43057bba8f442068"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "ADD POST",
+			"item": [
+				{
+					"name": "Positive test",
+					"item": [
+						{
+							"name": "add new Post",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(`add a new post with a status code sucessfully: ${pm.response.code}`, function () {\r",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+											"});\r",
+											"const response = pm.response.json();\r",
+											"const req = pm.request.body.toJSON();\r",
+											"const ownerID= JSON.parse(req['raw']).owner;\r",
+											"pm.globals.set(\"ownerID\", ownerID);\r",
+											"pm.globals.set(\"postID\", response.id);\r",
+											"console.log(response.owner[\"id\"])\r",
+											"console.log(response.id)\r",
+											"pm.test(`Verify that owner ID:\"${ownerID}\" sent is present in response`,()=>{\r",
+											"    pm.expect(response.owner[\"id\"]).to.eql(ownerID);\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n            \"image\": \"{{$randomImageUrl}}\",\r\n            \"text\": \"{{$randomWords}}\",\r\n            \"likes\": {{$randomInt}},\r\n            \"tags\":[\r\n                \"Digital Harbor\",\r\n                \"qa\"\r\n            ],\r\n            \"owner\": \"60d0fe4f5311236168a10a0b\"\r\n }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{urlBase}}post/create",
+									"host": [
+										"{{urlBase}}post"
+									],
+									"path": [
+										"create"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Negative test",
+					"item": [
+						{
+							"name": "add new Post without owner",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify that the server returns a status code 400 in the response\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"const response = pm.response.json();\r",
+											"pm.test(\"Verify that the error property exists in the body of the response.\", function () {\r",
+											"    pm.expect(response.error).to.not.eql(undefined);\r",
+											"});\r",
+											"\r",
+											"const message=\"BODY_NOT_VALID\"\r",
+											"pm.test(`Verify that the error message is: ${message}`, function () {\r",
+											"    pm.expect(response.error.toUpperCase()).to.eql(message);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n            \"image\": \"{{$randomImageUrl}}\",\r\n            \"text\": \"{{$randomWords}}\",\r\n            \"likes\": {{$randomInt}},\r\n            \"tags\":[\r\n                \"Digital Harbor\",\r\n                \"qa\"\r\n            ]\r\n }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{urlBase}}post/create",
+									"host": [
+										"{{urlBase}}post"
+									],
+									"path": [
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "add new Post without post content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify that the server returns a status code 400 in the response\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"const response = pm.response.json();\r",
+											"pm.test(\"Verify that the error property exists in the body of the response.\", function () {\r",
+											"    pm.expect(response.error).to.not.eql(undefined);\r",
+											"});\r",
+											"console.log(response.error);\r",
+											"\r",
+											"const message=\"BODY_NOT_VALID\"\r",
+											"pm.test(`Verify that the error message is: ${message}`, function () {\r",
+											"    pm.expect(response.error.toUpperCase()).to.eql(message);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n            \"owner\":\"60d0fe4f5311236168a10a0b\"\r\n }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{urlBase}}post/create",
+									"host": [
+										"{{urlBase}}post"
+									],
+									"path": [
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "add a new post with negative likes",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify that the server returns a status code 400 in the response\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"const response = pm.response.json();\r",
+											"pm.test(\"Verify that the error property exists in the body of the response.\", function () {\r",
+											"    pm.expect(response.error).to.not.eql(undefined);\r",
+											"});\r",
+											"const property=\"likes\"\r",
+											"pm.test(`Verify that the error message is content with the ${property} property.`, function () {\r",
+											"    pm.expect(pm.response.text()).to.not.include(property);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n            \"image\": \"{{$randomImageUrl}}\",\r\n            \"text\": \"{{$randomWords}}\",\r\n            \"likes\": -{{$randomInt}},\r\n            \"tags\":[\r\n                \"Digital Harbor\",\r\n                \"qa\"\r\n            ],\r\n            \"owner\": \"60d0fe4f5311236168a10a0b\"\r\n }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{urlBase}}post/create",
+									"host": [
+										"{{urlBase}}post"
+									],
+									"path": [
+										"create"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "GET",
+			"item": [
+				{
+					"name": "Positive test",
+					"item": [
+						{
+							"name": "get all post",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"user id found\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{urlBase}}/post?page=5",
+									"host": [
+										"{{urlBase}}"
+									],
+									"path": [
+										"post"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get list by User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"user id found\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const response = pm.response.text();\r",
+											"pm.test(\"Verify that the response is String\", function (){\r",
+											"    pm.expect(response).to.be.a(\"string\");\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "6302f2b876847096efbca653",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "app-id",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{urlBase}}/user/:id/post",
+									"host": [
+										"{{urlBase}}"
+									],
+									"path": [
+										"user",
+										":id",
+										"post"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "60d0fe4f5311236168a10a0b"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Negative test",
+					"item": [
+						{
+							"name": "Get  non-existent user by ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"response PARAMS NOT VALID\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"const response = pm.response.text();\r",
+											"pm.test(\"Verify that the response is String\", function (){\r",
+											"    pm.expect(response).to.be.a(\"string\");\r",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "6302f2b876847096efbca653",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "app-id",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{urlBase}}/user/:id/post",
+									"host": [
+										"{{urlBase}}"
+									],
+									"path": [
+										"user",
+										":id",
+										"post"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "60d0fe4f5311236168a10a0j"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get  random combination of characters.",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"response PARAMS NOT VALID\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"const response = pm.response.text();\r",
+											"pm.test(\"Verify that the response is String\", function (){\r",
+											"    pm.expect(response).to.be.a(\"string\");\r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function randomString(minValue, maxValue, dataSet = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') {\r",
+											"    if (!minValue) {\r",
+											"        minValue = 24;\r",
+											"        maxValue = 24;\r",
+											"    }\r",
+											"\r",
+											"    if (!maxValue) {\r",
+											"        maxValue = minValue;\r",
+											"    }\r",
+											"\r",
+											"    let length = _.random(minValue, maxValue),\r",
+											"        randomString = \"\";\r",
+											"\r",
+											"    for (let i = 0; i < length; i++)\r",
+											"        randomString += dataSet.charAt(Math.floor(Math.random() * dataSet.length));\r",
+											"    return randomString;\r",
+											"}\r",
+											"\r",
+											"pm.globals.set(\"randomString\", randomString());\r",
+											"console.log(\"randomString\", randomString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "6302f2b876847096efbca653",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "app-id",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{urlBase}}/user/:id/post",
+									"host": [
+										"{{urlBase}}"
+									],
+									"path": [
+										"user",
+										":id",
+										"post"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": "",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{randomString}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get user by ID \"?\"",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"response PARAMS NOT VALID\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "6302f2b876847096efbca653",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "app-id",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{urlBase}}/user/:id/post",
+									"host": [
+										"{{urlBase}}"
+									],
+									"path": [
+										"user",
+										":id",
+										"post"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "?"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "6303631569dc926f8c3a8a7d",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "app-id",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "idOwner",
+			"value": ""
+		},
+		{
+			"key": "textPublication",
+			"value": ""
+		},
+		{
+			"key": "idPublication",
+			"value": ""
+		}
+	]
+}
